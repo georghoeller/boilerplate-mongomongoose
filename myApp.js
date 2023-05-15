@@ -1,26 +1,59 @@
+const mongoose = require('mongoose');
 require('dotenv').config();
 
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-let Person;
+
+const personSchema = new mongoose.Schema({
+  name: { type: String },
+  age: {type: Number },
+  favoriteFoods: { type: [String]}
+});
+
+const Person = mongoose.model('Person',personSchema);
 
 const createAndSavePerson = (done) => {
-  done(null /*, data*/);
+  const georgHoeller = new Person({name:'Georg',age:29,favoriteFoods:['cashew','risotto']});
+
+  georgHoeller.save(function(err,data){
+    if (err) return console.log(err);
+    done(null, data);
+  });
+
 };
 
+const arrayOfPeople = [
+  {name: "Frankie", age: 74, favoriteFoods: ["Del Taco"]},
+  {name: "Sol", age: 76, favoriteFoods: ["roast chicken"]},
+  {name: "Robert", age: 78, favoriteFoods: ["wine"]}
+];
+
 const createManyPeople = (arrayOfPeople, done) => {
-  done(null /*, data*/);
+  Person.create(arrayOfPeople,function(err,people){
+    if (err) return console.log(err);
+    done(null, people);
+  })
 };
 
 const findPeopleByName = (personName, done) => {
-  done(null /*, data*/);
+  Person.find({name:personName},function(err,personFound){
+    if (err) return console.log(err);
+    done(null ,personFound);
+  });
 };
 
 const findOneByFood = (food, done) => {
-  done(null /*, data*/);
+  Person.findOne({favoriteFoods:food}, function(err,data){
+    if (err) return console.log(err);
+    done(null, data);
+  });
 };
 
 const findPersonById = (personId, done) => {
-  done(null /*, data*/);
+  Person.findById(personId, function(err,data){
+    if (err) return console.log(err);
+    done(null , data);
+  });
 };
 
 const findEditThenSave = (personId, done) => {
